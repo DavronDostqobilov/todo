@@ -27,7 +27,7 @@ class TaskList(APIView):
         serializer = TaskSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -73,7 +73,7 @@ class CotegoryView(APIView):
             serializer = CategorySerializer(category, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         try:
-            category =category.objects.get(pk=pk)
+            category =Category.objects.get(pk=pk)
             serializer = CategorySerializer(category)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
@@ -88,7 +88,7 @@ class CotegoryView(APIView):
     def put(self, request: Request, pk) -> Response:
         try:
             category = Category.objects.get(pk=pk)
-        except CategorySerializer.DoesNotExist:
+        except Category.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         request.data['user'] = request.user.id
         serializer = CategorySerializer(category, data=request.data)
